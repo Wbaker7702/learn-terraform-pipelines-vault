@@ -1,17 +1,33 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-variable "consul_workspace" {
+variable "project_id" {
   type        = string
-  description = "Workspace that created the Consul cluster"
+  description = "The Google Cloud project ID."
 }
 
-variable "cluster_workspace" {
+variable "region" {
   type        = string
-  description = "Workspace that created the Kubernetes cluster"
+  description = "The Google Cloud region."
 }
 
-variable "organization" {
+variable "host" {
   type        = string
-  description = "Organization of workspace that created the Kubernetes cluster"
+  description = "The Kubernetes cluster host."
+}
+
+variable "cluster_ca_certificate" {
+  type        = string
+  description = "The Kubernetes cluster CA certificate."
+  sensitive   = true
+}
+
+variable "release_name" {
+  type        = string
+  description = "The Helm release name for Consul."
+}
+
+variable "namespace" {
+  type        = string
+  description = "The Kubernetes namespace for Consul."
 }
