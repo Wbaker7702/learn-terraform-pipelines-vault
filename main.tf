@@ -15,6 +15,10 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 4.77.0"
     }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 5.4.0"
+    }
   }
 
   required_version = ">= 1.1.0"
@@ -48,8 +52,20 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host                   = data.tfe_outputs.cluster.values.host
+    host                   = "https://${data.tfe_outputs.cluster.values.host}"
     token                  = data.google_client_config.default.access_token
     cluster_ca_certificate = data.tfe_outputs.cluster.values.cluster_ca_certificate
   }
+}
+
+data "kubernetes_service" "vault" {
+  metadata {
+    name      = helm_release.vault.name
+    namespace = data.tfe_outputs.consul.values.namespace
+  }
+}
+
+provider "vault" {
+  address = "http://${data.kubernetes_service.vault.status.0.load_balancer.0.ingress.0.ip}:8200"
+  token   = var.vault_token
 }
