@@ -15,3 +15,9 @@ variable "organization" {
   type        = string
   description = "Organization of workspace that created the Kubernetes cluster"
 }
+
+variable "vault_token" {
+  type        = string
+  description = "Vault token to use for authentication"
+  sensitive   = true
+}
