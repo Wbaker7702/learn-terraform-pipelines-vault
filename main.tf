@@ -19,6 +19,10 @@ terraform {
       source  = "hashicorp/vault"
       version = "~> 5.4.0"
     }
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "~> 0.48.0"
+    }
   }
 
   required_version = ">= 1.1.0"
@@ -66,6 +70,6 @@ data "kubernetes_service" "vault" {
 }
 
 provider "vault" {
-  address = "http://${data.kubernetes_service.vault.status.0.load_balancer.0.ingress.0.ip}:8200"
+  address = "http://${data.kubernetes_service.vault.status[0].load_balancer[0].ingress[0].ip}:8200"
   token   = var.vault_token
 }
