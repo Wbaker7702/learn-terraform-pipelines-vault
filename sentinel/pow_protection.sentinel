@@ -1,0 +1,50 @@
+import "strings"
+import "tfplan/v2" as tfplan
+
+pow_guard_defined = rule {
+  "terraform_data.pow_guard" in tfplan.resource_changes
+}
+
+pow_change = func() {
+  tfplan.resource_changes["terraform_data.pow_guard"][0]
+}
+
+zeros_prefix = func(count) {
+  prefix = ""
+
+  for _ in range(count) {
+    prefix += "0"
+  }
+
+  prefix
+}
+
+difficulty_value = func() {
+  tfplan.variables.pow_difficulty.value
+}
+
+nonce_value = func() {
+  tfplan.variables.pow_nonce.value
+}
+
+nonce_provided = rule {
+  nonce_value() != ""
+}
+
+pow_guard_not_destroyed = rule when pow_guard_defined {
+  all pow_change().change.actions as action {
+    action != "delete"
+  }
+}
+
+digest_meets_difficulty = rule when pow_guard_defined and pow_guard_not_destroyed {
+  digest = pow_change().change.after.triggers_replace.digest
+  strings.has_prefix(digest, zeros_prefix(difficulty_value()))
+}
+
+main = rule {
+  pow_guard_defined and
+  pow_guard_not_destroyed and
+  nonce_provided and
+  digest_meets_difficulty
+}
