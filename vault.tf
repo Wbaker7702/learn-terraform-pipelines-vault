@@ -14,6 +14,16 @@ resource "helm_release" "vault" {
   }
 
   set {
+    name  = "server.auditStorage.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
     name  = "server.ha.config"
     value = <<EOT
     ui = true
@@ -28,5 +38,13 @@ resource "helm_release" "vault" {
       address = "consul-server:8500"
     }
     EOT
+  }
+}
+
+resource "vault_audit" "file" {
+  type = "file"
+
+  options = {
+    file_path = "/vault/audit/vault_audit.log"
   }
 }

@@ -30,4 +30,11 @@ variable "release_name" {
 variable "namespace" {
   type        = string
   description = "The Kubernetes namespace for Consul."
+  description = "Organization of workspace that created the Kubernetes cluster"
+}
+
+variable "vault_token" {
+  type        = string
+  description = "Vault token to use for authentication"
+  sensitive   = true
 }
